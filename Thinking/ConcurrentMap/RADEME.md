@@ -50,7 +50,7 @@ BenchmarkConcurrenceMap/SliceMap_MissSet-8       	20545768	        59.82 ns/op	 
 需要加锁的操作：
 1. 读操作，未命中 `read` ，有新增key，需要加锁再次读取 `dirty`。
 2. 写操作，命中 `read` ，同时修改 `read` 和 `dirty` 。
-3. 写操作，未命中 `read` ，修改` dirty` 。
+3. 写操作，未命中 `read` ，修改 `dirty` 。
 
 	总结一下，用 `SyncMap` 写入新key性能较低，读取旧key性能较高，所以判断是否使用 `SyncMap` 的标准可以转化为，写入新key和读取旧key的比例，就是相对 `SliceMap` 写入新key所消耗的时间，要用几次读取旧key补回来，并且其他操作中， `SliceMap` 通过分片，效率也是大于 `SyncMap`  的，这点也需要考虑到。
 
@@ -66,9 +66,9 @@ BenchmarkConcurrenceMap/SliceMap_GetMoreThanSet-8        	25575064	        46.75
  
  读操作：
  ```
- BenchmarkMap-8-10000   	33418690	        35.61 ns/op
- BenchmarkMap-8-100000   	21556942	        59.60 ns/op
- BenchmarkMap-8-1000000   	 7311390	        164.7 ns/op
+ BenchmarkMap-8-10000       33418690            35.61 ns/op
+ BenchmarkMap-8-100000      21556942            59.60 ns/op
+ BenchmarkMap-8-1000000     7311390             164.7 ns/op
 ```
 
 如压测，数量级10w以上读取性能下降就很厉害了。
