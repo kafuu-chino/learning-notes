@@ -1,5 +1,5 @@
 # ConcurrentMap
-前言：
+##### 前言：
 本次讨论并发场景下安全的map，讨论性能问题和使用场景，对map本身实现不过多关注。另附测试代码见文件夹，个人视野有限，有问题欢迎提出。
 
 go中保证map数据并发安全需要加锁，为了提高效率有两种优化方案，
@@ -11,10 +11,11 @@ go中保证map数据并发安全需要加锁，为了提高效率有两种优化
 2. `SyncMap`: 读写分离，读不加锁
 3. `SliceMap`: 对LockMap进行分片
 
-这里主要针对三种设计之间进行新能对比，其他暂时不做赘述。
-按照设计理念，理论上性能应该是
+这里主要针对三种设计之间进行西能对比，其他暂时不做赘述。
+按照设计理念，理论上性能应该是：
 
 读操作：`SyncMap` > `SliceMap` > `LockMap`
+
 写操作：`LockMap` > `SliceMap` > `SyncMap`
 
 以下为压测数据。
@@ -53,7 +54,7 @@ BenchmarkConcurrenceMap/SliceMap_MissSet-8       	20545768	        59.82 ns/op	 
 
 	总结一下，用 `SyncMap` 写入新key性能较低，读取旧key性能较高，所以判断是否使用 `SyncMap` 的标准可以转化为，写入新key和读取旧key的比例，就是相对 `SliceMap` 写入新key所消耗的时间，要用几次读取旧key补回来，并且其他操作中， `SliceMap` 通过分片，效率也是大于 `SyncMap`  的，这点也需要考虑到。
 
-假设每次写入新key，读取命中的情况，经反复测试，读写约`2000:1`， `SyncMap` 才有优势，数据如下。
+假设每次写入新key，读取命中的情况，经反复测试，读写比例约2000:1以上， `SyncMap` 才有优势，测数据如下。
 ```
 BenchmarkConcurrenceMap/LockMap_GetMoreThanSet-8         	14390233	        75.92 ns/op	       0 B/op	       0 allocs/op
 BenchmarkConcurrenceMap/SyncMap_GetMoreThanSet-8         	30967234	        39.30 ns/op	       0 B/op	       0 allocs/op
@@ -62,19 +63,20 @@ BenchmarkConcurrenceMap/SliceMap_GetMoreThanSet-8        	25575064	        46.75
 
 这里讨论map上层使用，理论上当map元素越多，虽然hash本身时间复杂度不会增加，但是内部会因为hash冲突等问题，导致性能降低。所以数据量过大的时候 
  `SliceMap` 还有map自身性能的优势，压测如下（依旧使用 `keyPool` ）。
- 读取：
+ 
+ 读操作：
  ```
  BenchmarkMap-8-10000   	33418690	        35.61 ns/op
  BenchmarkMap-8-100000   	21556942	        59.60 ns/op
- BenchmarkMap-8-1000000   	 7311390	       164.7 ns/op
+ BenchmarkMap-8-1000000   	 7311390	        164.7 ns/op
 ```
 
 如压测，数量级10w以上读取性能下降就很厉害了。
 
-总结：
+##### 总结：
 1. 简单场景，对性能无明显要求使用 `LockMap` 。
-2. 读远大于新key写入，数据量不是特多大，使用 `SyncMap` 。
+2. 读远大于新key写入，数据量不是特别大，使用 `SyncMap` 。
 3. 其他场景使用 `SliceMap` 。
 
-思考：
+##### 思考：
 理论上 `SliceMap` 也可以用 `sync.Map` 实现，不过个人接触的大部分场景map并不是瓶颈，相反会浪费很多内存。
