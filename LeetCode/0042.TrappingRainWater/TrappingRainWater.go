@@ -23,7 +23,7 @@ func trap1(height []int) int {
 				markHeight, markIndex = v, i
 				holder = 0
 			} else {
-				// 累加已经存在的方块，到时候减掉
+				// 累加已经存在的方块，结算时候减掉
 				holder += v
 			}
 		}
@@ -46,7 +46,7 @@ func trap1(height []int) int {
 				markHeight, markIndex = height[i], i
 				holder = 0
 			} else {
-				// 累加已经存在的方块，到时候减掉
+				// 累加已经存在的方块，结算时候减掉
 				holder += height[i]
 			}
 		}
