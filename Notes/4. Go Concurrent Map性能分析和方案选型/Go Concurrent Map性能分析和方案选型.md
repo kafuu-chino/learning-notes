@@ -54,7 +54,7 @@ BenchmarkConcurrenceMap/SliceMap_MissSet-8       	20545768	        59.82 ns/op	 
 2. 写操作，命中 `read` ，同时修改 `read` 和 `dirty` 。
 3. 写操作，未命中 `read` ，修改 `dirty` 。
 
-	总结一下，用 `SyncMap` 写入新key性能较低，读取旧key性能较高，所以判断是否使用 `SyncMap` 的标准可以转化为，写入新key和读取旧key的比例，就是相对 `SliceMap` 写入新key所消耗的时间，要用几次读取旧key补回来，并且其他操作中， `SliceMap` 通过分片，效率也是大于 `SyncMap`  的，这点也需要考虑到。
+总结一下，用 `SyncMap` 写入新key性能较低，读取旧key性能较高，所以判断是否使用 `SyncMap` 的标准可以转化为，写入新key和读取旧key的比例，就是相对 `SliceMap` 写入新key所消耗的时间，要用几次读取旧key补回来，并且其他操作中， `SliceMap` 通过分片，效率也是大于 `SyncMap`  的，这点也需要考虑到。
 
 假设每次写入新key，读取命中的情况，经反复测试，读写比例约2000:1以上， `SyncMap` 才有优势，测数据如下。
 ```
