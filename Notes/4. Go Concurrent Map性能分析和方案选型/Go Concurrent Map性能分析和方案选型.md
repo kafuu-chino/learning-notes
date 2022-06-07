@@ -12,14 +12,14 @@ go中保证map数据并发安全需要加锁，为了提高效率有两种优化
 3. `SliceMap`: 对LockMap进行分片
 
 这里主要针对三种设计之间进行西能对比，其他暂时不做赘述。
+
 按照设计理念，理论上性能应该是：
 
 读操作：`SyncMap` > `SliceMap` > `LockMap`
 
 写操作：`LockMap` > `SliceMap` > `SyncMap`
 
-以下为压测数据。
-注意以下两点：
+以下为压测数据。注意以下两点：
 1. 以下压测，都使用不同key，发挥 `SliceMap` 优势，对其他两种map影响不大
 2. 涉及到取不同key的操作，使用 `keyPool` ，需要额外消耗30ns/op，压测如下。
 ```
@@ -44,9 +44,11 @@ BenchmarkConcurrenceMap/SliceMap_MissSet-8       	20545768	        59.82 ns/op	 
 
 那么就有个问题，怎么才算读多写少，读和写的比例是多少呢。
 这里要了解下`SyncMap`的部分实现原理，内部有缓存数据 `read` 和加锁数据 `dirty`，以下用变量名代替 。
+
 首先了解下不需要加锁的操作：
 1. 读操作，命中 `read` 。
 2. 读操作，未命中 `read` ，但是没有新增key，这次读取直接判断为miss。
+
 需要加锁的操作：
 1. 读操作，未命中 `read` ，有新增key，需要加锁再次读取 `dirty`。
 2. 写操作，命中 `read` ，同时修改 `read` 和 `dirty` 。
