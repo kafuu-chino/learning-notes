@@ -229,12 +229,12 @@ http://192.168.178.128:8080/eureka/,http://192.168.178.130:8080/eureka/
 
 打开管理页面：http://192.168.178.131:8070/
 
-![[3.1.png]]
+![](https://github.com/kafuu-chino/learning-notes/blob/main/Notes/3.%20%E5%88%86%E5%B8%83%E5%BC%8F%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83Apollo%E9%83%A8%E7%BD%B2%E5%AE%9E%E8%B7%B5/imgs/3.1.png?raw=true)
 
 如图所示，初始账号密码为：apollo,admin
 
 进入系统信息：
-![[3.2.png]]
+![](https://github.com/kafuu-chino/learning-notes/blob/main/Notes/3.%20%E5%88%86%E5%B8%83%E5%BC%8F%E9%85%8D%E7%BD%AE%E4%B8%AD%E5%BF%83Apollo%E9%83%A8%E7%BD%B2%E5%AE%9E%E8%B7%B5/imgs/3.2.png?raw=true)
 
 可以看到两个高可用环境已经配置完毕~接下来就是试用阶段。
 
